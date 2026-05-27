@@ -76,6 +76,24 @@ footer{text-align:center;padding:2.5rem 2rem;color:var(--muted);font-size:0.8rem
 footer .f{font-weight:600;color:var(--blue-deep);font-size:1rem;margin-bottom:0.3rem}
 
 @media(max-width:768px){.hero{grid-template-columns:1fr}.hero-text{padding:5rem 1.5rem 2rem}.hero-img{height:50vh;order:-1}.photos{grid-template-columns:1fr 1fr}nav .links{display:none}.pair{grid-template-columns:1fr}}
+
+.cal-month{background:#fff;border-radius:12px;padding:1.25rem;min-width:220px;flex:1;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.cal-month h4{text-align:center;margin-bottom:0.75rem;font-size:1.05rem;color:var(--blue-deep)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
+.cal-grid .dl{font-size:0.65rem;color:#999;font-weight:600;padding:0.2rem 0}
+.cal-grid .day{font-size:0.8rem;padding:0.35rem 0.1rem;border-radius:6px;cursor:pointer;transition:all 0.15s;color:#333}
+.cal-grid .day:hover:not(.past):not(.empty){background:var(--sand);font-weight:600}
+.cal-grid .day.past{color:#ccc;cursor:default}
+.cal-grid .day.selected{background:var(--blue-deep);color:#fff;font-weight:600}
+.cal-grid .day.today{border:2px solid var(--blue-deep);font-weight:600}
+.cal-grid .day.empty{cursor:default}
+.time-slot-btn{padding:0.5rem 1rem;border:2px solid #e0d8ce;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:0.85rem;transition:all 0.2s;color:#333}
+.time-slot-btn:hover{border-color:var(--blue-deep)}
+.time-slot-btn.active{background:var(--blue-deep);color:#fff;border-color:var(--blue-deep)}
+.pending-card{background:#fff;border-radius:10px;padding:1rem;margin-bottom:0.5rem;border-left:4px solid var(--blue-deep);box-shadow:0 1px 6px rgba(0,0,0,0.04)}
+.pending-card .pn{font-weight:600;color:var(--blue-deep)}
+.pending-card .pd{font-size:0.85rem;color:#666;margin-top:0.15rem}
+
 </style>
 </head>
 <body>
@@ -141,15 +159,85 @@ footer .f{font-weight:600;color:var(--blue-deep);font-size:1rem;margin-bottom:0.
 </div></div></section>
 
 <section id="book"><div class="container">
-<div class="text-center"><h2>Thinking of <strong>visiting?</strong></h2><p class="sub">Drop Grant a note</p></div>
-<div class="book">
-<form onsubmit="alert('🌺 Sent! Grant will be in touch.')">
-<div class="pair"><div class="field"><label>Your Name</label><input type="text" placeholder="First and last" required></div><div class="field"><label>Email</label><input type="email" placeholder="you@email.com" required></div></div>
-<div class="pair"><div class="field"><label>Phone</label><input type="tel" placeholder="(555) 123-4567"></div><div class="field"><label>How many?</label><select><option>1-2</option><option>3-4</option><option>5-6</option><option>7+</option></select></div></div>
-<div class="field"><label>When?</label><input type="text" placeholder="e.g., mid July"></div>
-<div class="field"><label>Anything else?</label><textarea rows="2" placeholder="Kids? Special requests?"></textarea></div>
-<button type="submit" class="btn">Send to Grant 🌺</button>
-</form></div></div></section>
+  <div class="text-center"><h2>Pick your <strong>dates</strong></h2><p class="sub">Select days on the calendar, then fill in your details</p></div>
+  <div id="cal-container" style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem"></div>
+  <div id="ts-area" style="display:none;text-align:center;margin-bottom:1.5rem">
+    <p style="margin-bottom:0.5rem;font-size:0.95rem">When are you arriving?</p>
+    <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap">
+      <button class="time-slot-btn" onclick="sts(this,'Morning (flexible)')">🌅 Morning</button>
+      <button class="time-slot-btn" onclick="sts(this,'Afternoon')">☀️ Afternoon</button>
+      <button class="time-slot-btn" onclick="sts(this,'Evening')">🌙 Evening</button>
+      <button class="time-slot-btn" onclick="sts(this,'Multiple days')">📅 Multiple days</button>
+    </div>
+  </div>
+  <div style="background:#fff;border-radius:14px;padding:2rem;max-width:520px;margin:0 auto;box-shadow:0 3px 20px rgba(0,0,0,0.05)">
+    <form id="stay-form" onsubmit="ssr(event)">
+      <div class="field"><label>Your Name *</label><input type="text" id="sf-name" required></div>
+      <div class="pair"><div class="field"><label>Phone</label><input type="tel" id="sf-phone"></div><div class="field"><label>Email</label><input type="email" id="sf-email"></div></div>
+      <div class="field"><label>Selected Dates</label><input type="text" id="sf-dates" readonly placeholder="Click dates on the calendar" style="background:#faf6f0"></div>
+      <div class="pair"><div class="field"><label>Guests</label><input type="number" id="sf-guests" min="1" max="20" value="2"></div><div class="field"><label>Time</label><input type="text" id="sf-time" readonly placeholder="Pick above" style="background:#faf6f0"></div></div>
+      <div class="field"><label>Notes for Grant</label><textarea id="sf-notes" rows="2" placeholder="Anything he should know?"></textarea></div>
+      <button type="submit" class="btn">Send to Grant 🌺</button>
+    </form>
+    <div id="stay-conf" style="display:none;text-align:center;padding:1rem"><p style="color:var(--blue-deep);font-size:1.1rem">🌺 Sent! Grant will be in touch.</p></div>
+  </div>
+  <div id="pend-req" style="max-width:520px;margin:1.5rem auto 0;display:none">
+    <h3 style="font-size:1rem;margin-bottom:0.5rem">📋 Pending Requests</h3>
+    <div id="pend-list"></div>
+  </div>
+</div></section>
 
 <footer><div class="f">Ikena Kai 🌺</div><p>Kihei, Maui — For friends & family</p></footer>
+
+<script>
+(function(){
+  var today=new Date();today.setHours(0,0,0,0);
+  var selectedDates=new Set();var selectedTimeSlot='';
+  function rc(){var c=document.getElementById('cal-container');c.innerHTML='';for(var m=0;m<4;m++){var d=new Date(today.getFullYear(),today.getMonth()+m,1);c.appendChild(bm(d));}}
+  function bm(date){
+    var wrap=document.createElement('div');wrap.className='cal-month';
+    var mn=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var h=document.createElement('h4');h.textContent=mn[date.getMonth()]+' '+date.getFullYear();wrap.appendChild(h);
+    var grid=document.createElement('div');grid.className='cal-grid';
+    ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(function(l){var s=document.createElement('span');s.className='dl';s.textContent=l;grid.appendChild(s);});
+    var fd=date.getDay(),dim=new Date(date.getFullYear(),date.getMonth()+1,0).getDate();
+    for(var i=0;i<fd;i++){var e=document.createElement('span');e.className='day empty';grid.appendChild(e);}
+    for(var d=1;d<=dim;d++){
+      var cell=new Date(date.getFullYear(),date.getMonth(),d);cell.setHours(0,0,0,0);
+      var sp=document.createElement('span');sp.className='day';sp.textContent=d;
+      var key=cell.toISOString().slice(0,10);
+      if(cell<today)sp.classList.add('past');
+      else{
+        if(cell.getTime()===today.getTime())sp.classList.add('today');
+        if(selectedDates.has(key))sp.classList.add('selected');
+        sp.addEventListener('click',function(k,s){return function(){
+          if(selectedDates.has(k)){selectedDates.delete(k);s.classList.remove('selected');}
+          else{selectedDates.add(k);s.classList.add('selected');}
+          udf();document.getElementById('ts-area').style.display=selectedDates.size>0?'block':'none';
+        };}(key,sp));
+      }
+      grid.appendChild(sp);
+    }
+    wrap.appendChild(grid);return wrap;
+  }
+  function udf(){var sorted=[...selectedDates].sort();document.getElementById('sf-dates').value=sorted.join(', ');}
+  window.sts=function(btn,val){document.querySelectorAll('.time-slot-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');selectedTimeSlot=val;};
+  window.ssr=function(e){
+    e.preventDefault();
+    var req={name:document.getElementById('sf-name').value,phone:document.getElementById('sf-phone').value,email:document.getElementById('sf-email').value,dates:document.getElementById('sf-dates').value,guests:document.getElementById('sf-guests').value,notes:document.getElementById('sf-notes').value,timeSlot:selectedTimeSlot,submitted:new Date().toISOString()};
+    var requests=JSON.parse(localStorage.getItem('stay_requests')||'[]');requests.push(req);localStorage.setItem('stay_requests',JSON.stringify(requests));
+    document.getElementById('stay-form').style.display='none';document.getElementById('stay-conf').style.display='block';
+    setTimeout(function(){
+      document.getElementById('stay-form').reset();document.getElementById('stay-form').style.display='block';document.getElementById('stay-conf').style.display='none';
+      selectedDates.clear();selectedTimeSlot='';document.querySelectorAll('.time-slot-btn').forEach(function(b){b.classList.remove('active');});document.getElementById('ts-area').style.display='none';rc();rp();
+    },3000);rp();
+  };
+  function rp(){
+    var requests=JSON.parse(localStorage.getItem('stay_requests')||'[]');var area=document.getElementById('pend-req');var list=document.getElementById('pend-list');
+    if(!requests.length){area.style.display='none';return;}area.style.display='block';list.innerHTML='';
+    requests.forEach(function(r){var d=document.createElement('div');d.className='pending-card';d.innerHTML='<div class="pn">'+r.name+' — '+r.guests+' guest'+(r.guests>1?'s':'')+'</div><div class="pd">'+r.dates+(r.timeSlot?' · '+r.timeSlot:'')+'</div>'+(r.notes?'<div class="pd" style="margin-top:0.2rem">'+r.notes+'</div>':'');list.appendChild(d);});
+  }
+  rc();rp();
+})();
+</script>
 </body></html>
