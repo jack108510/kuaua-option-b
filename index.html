@@ -72,6 +72,9 @@ section{padding:80px 24px}
 
 footer{text-align:center;padding:40px 24px;background:var(--ocean);color:rgba(255,255,255,.7);font-size:.9rem}
 footer strong{color:#fff}
+
+.cal-day.blocked{background:#e0ddd5;color:#aaa;cursor:not-allowed;text-decoration:line-through;opacity:.5}
+.cal-day.full{background:rgba(220,80,80,.15);color:#c44;cursor:not-allowed;font-weight:600}
 </style>
 </head>
 <body>
@@ -172,46 +175,74 @@ footer strong{color:#fff}
 <footer><strong>Ikena Kai</strong> — Kihei, Maui | For friends & family</footer>
 <script>
 
+const SUPABASE_URL = "https://xacehhtgvubcqdoltazg.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhY2VoaHRndnViY3Fkb2x0YXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDI4NjcsImV4cCI6MjA4OTUxODg2N30.uGMVsCHLM5i1UV4l5GyJiGLBGmRG1fILAbIripGNSkY";
+const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhY2VoaHRndnViY3Fkb2x0YXpnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzk0Mjg2NywiZXhwIjoyMDg5NTE4ODY3fQ.5sqLtRtRnWEEuytTsfGhh1hmrQkTilL4Bd_rMrqmQ9A";
+
 const CAL = {
     months: [],
     selectedDates: new Set(),
-    timeSlot: '',
+    timeSlot: "",
     currentOffset: 0,
-    init() {
+    blockedDates: new Set(),
+    fullDates: new Set(),
+    async init() {
         const now = new Date();
         for (let i = 0; i < 4; i++) {
             const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
             this.months.push({ year: d.getFullYear(), month: d.getMonth() });
         }
+        await this.fetchAvailability();
         this.render();
     },
+    async fetchAvailability() {
+        try {
+            const now = new Date();
+            const fromDate = now.toISOString().split("T")[0];
+            const toDate = new Date(now.getFullYear(), now.getMonth() + 4, 0).toISOString().split("T")[0];
+            const res = await fetch(SUPABASE_URL + "/rest/v1/grant_availability?select=date,status&date=gte." + fromDate + "&date=lte." + toDate, {
+                headers: { "apikey": SUPABASE_ANON_KEY, "Authorization": "Bearer " + SUPABASE_ANON_KEY }
+            });
+            if (res.ok) {
+                const rows = await res.json();
+                rows.forEach(r => {
+                    if (r.status === "blocked") this.blockedDates.add(r.date);
+                    if (r.status === "full") this.fullDates.add(r.date);
+                });
+            }
+        } catch(e) { console.warn("Could not fetch availability:", e); }
+    },
     render() {
-        const grid = document.getElementById('cal-grid');
-        grid.innerHTML = '';
+        const grid = document.getElementById("cal-grid");
+        grid.innerHTML = "";
         const today = new Date(); today.setHours(0,0,0,0);
         this.months.forEach((m, idx) => {
-            const div = document.createElement('div');
-            div.className = 'cal-month';
-            const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            const div = document.createElement("div");
+            div.className = "cal-month";
+            const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
             const firstDay = new Date(m.year, m.month, 1).getDay();
             const daysInMonth = new Date(m.year, m.month + 1, 0).getDate();
-            let html = `<div class="cal-month-title">${monthNames[m.month]} ${m.year}</div>`;
+            let html = '<div class="cal-month-title">' + monthNames[m.month] + ' ' + m.year + '</div>';
             html += '<div class="cal-days-header">';
-            ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => html += `<span>${d}</span>`);
+            ["Su","Mo","Tu","We","Th","Fr","Sa"].forEach(d => html += '<span>' + d + '</span>');
             html += '</div><div class="cal-days">';
             for (let i = 0; i < firstDay; i++) html += '<span class="cal-empty"></span>';
             for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = `${m.year}-${String(m.month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const dateStr = m.year + '-' + String(m.month+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
                 const thisDate = new Date(m.year, m.month, d);
                 const isPast = thisDate < today;
                 const isToday = thisDate.getTime() === today.getTime();
                 const isSel = this.selectedDates.has(dateStr);
+                const isBlocked = this.blockedDates.has(dateStr);
+                const isFull = this.fullDates.has(dateStr);
+                const isDisabled = isPast || isBlocked || isFull;
                 let cls = 'cal-day';
                 if (isPast) cls += ' past';
                 if (isToday) cls += ' today';
                 if (isSel) cls += ' selected';
-                html += `<span class="${cls}" ${isPast?'':'onclick="CAL.toggleDate(\''+dateStr+'\')"'}`;
-                html += `>${d}</span>`;
+                if (isBlocked) cls += ' blocked';
+                if (isFull) cls += ' full';
+                html += '<span class="' + cls + '"' + (isDisabled ? '' : ' onclick="CAL.toggleDate(\'' + dateStr + '\')"') + '>' + d + '</span>';
             }
             html += '</div>';
             div.innerHTML = html;
@@ -248,13 +279,33 @@ function submitBooking(e) {
     const notes = document.getElementById('booking-notes').value;
     if (!dates) { alert('Please select at least one date on the calendar.'); return false; }
     if (!slot) { alert('Please pick a time slot.'); return false; }
-    const body = `Stay Request for Ikena Kai%n%nName: ${name}%nEmail: ${email}%nPhone: ${phone}%nDates: ${dates}%nTime: ${slot}%nGuests: ${guests}%nNotes: ${notes}`;
-    window.location.href = `mailto:wildejack1010@gmail.com?subject=Stay Request - ${name} (${dates})&body=${encodeURIComponent(body.replace(/%n/g,'\n'))}`;
-    // Track locally
+
+    const sorted = Array.from(dates.split(', ')).sort();
+    const arrival = sorted[0];
+    const departure = sorted[sorted.length - 1];
+
+    const payload = { name: name, email: email, phone: phone, arrival: arrival, departure: departure, guests: parseInt(guests), status: 'pending', notes: (slot ? 'Time slot: ' + slot + '. ' : '') + (notes || '') };
+
+    fetch(SUPABASE_URL + '/rest/v1/grant_bookings', {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_SERVICE_KEY, 'Authorization': 'Bearer ' + SUPABASE_SERVICE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify(payload)
+    }).then(res => {
+        if (res.ok) {
+            document.getElementById('booking-form').innerHTML = '<div style="text-align:center;padding:40px 20px"><h3 style="color:var(--ocean)">Request Submitted!</h3><p style="margin-top:12px;color:var(--light-text)">Your request has been submitted! Grant will review and confirm within 24 hours.</p></div>';
+        } else {
+            throw new Error('Supabase write failed');
+        }
+    }).catch(err => {
+        console.error('Booking error, falling back to mailto:', err);
+        const body = 'Stay Request for Ikena Kai\n\nName: ' + name + '\nEmail: ' + email + '\nPhone: ' + phone + '\nDates: ' + dates + '\nTime: ' + slot + '\nGuests: ' + guests + '\nNotes: ' + notes;
+        window.location.href = 'mailto:wildejack1010@gmail.com?subject=Stay Request - ' + name + ' (' + dates + ')&body=' + encodeURIComponent(body);
+        alert('Your request is being sent via email! Check your email app.');
+    });
+
     const reqs = JSON.parse(localStorage.getItem('ikena_requests') || '[]');
-    reqs.push({ name, email, dates, slot, guests, notes, sent: new Date().toISOString() });
+    reqs.push({ name: name, email: email, dates: dates, slot: slot, guests: guests, notes: notes, sent: new Date().toISOString() });
     localStorage.setItem('ikena_requests', JSON.stringify(reqs));
-    alert('Your request is being sent! Check your email app.');
     return false;
 }
 
