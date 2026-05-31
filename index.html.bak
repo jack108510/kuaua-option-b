@@ -47,7 +47,7 @@ section{padding:80px 24px}
 .rules-grid li{background:var(--card-bg);padding:20px;border-radius:12px;font-size:.92rem;display:flex;gap:12px;align-items:flex-start;box-shadow:0 1px 4px rgba(0,0,0,.03)}
 .rule-num{background:var(--ocean);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}
 .pick-card{background:var(--card-bg);border-radius:16px;padding:24px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 4px rgba(0,0,0,.03)}
-.pick-icon{display:none}
+.pick-icon{font-size:1.6rem;min-width:36px}
 .pick-info h4{margin-bottom:4px;font-size:1rem}
 .pick-info p{font-size:.88rem;color:var(--light-text)}
 .picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
@@ -80,7 +80,7 @@ footer strong{color:#fff}
 <body>
 <nav><div class="nav-inner">
 <div class="nav-logo">Ikena Kai</div>
-<button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">Menu</button>
+<button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Menu">☰</button>
 <ul class="nav-links">
 <li><a href="#home">Home</a></li>
 <li><a href="#house">The House</a></li>
@@ -112,16 +112,16 @@ footer strong{color:#fff}
 <section id="amenities" style="background:var(--gray)"><div class="container">
 <h2 class="section-title">Amenities</h2>
 <div class="amenity-grid">
-<div class="amenity-card"><h3>Infinity Pool & Spa</h3><p>40-foot pool with gradual entry, heated spa with jets. Pool toys in the storage bench. No glass — plastic cups in kitchen.</p></div>
-<div class="amenity-card"><h3>Guest Cottage</h3><p>Detached 2-bedroom, private entrance, full bathroom, own AC.</p></div>
-<div class="amenity-card"><h3>Open Lanai</h3><p>24-foot pocket sliding doors. Gas grill, outdoor dining.</p></div>
-<div class="amenity-card"><h3>Outdoor Shower</h3><p>Hot & cold water. Rinse off that beach sand.</p></div>
-<div class="amenity-card"><h3>Media Room</h3><p>Surround sound, streaming services, laminated setup guide.</p></div>
-<div class="amenity-card"><h3>Multi-Zone AC</h3><p>Central AC with per-area controls. Cottage has wall unit.</p></div>
-<div class="amenity-card"><h3>Chef's Kitchen</h3><p>Gas range, full appliances, coffee maker, spices stocked.</p></div>
-<div class="amenity-card"><h3>WiFi</h3><p>IkenaKai_Guest network. Password from Grant.</p></div>
+<div class="amenity-card"><h3>🏊 Infinity Pool & Spa</h3><p>40-foot pool with gradual entry, heated spa with jets. Pool toys in the storage bench. No glass — plastic cups in kitchen.</p></div>
+<div class="amenity-card"><h3>🏠 Guest Cottage</h3><p>Detached 2-bedroom, private entrance, full bathroom, own AC.</p></div>
+<div class="amenity-card"><h3>🚪 Open Lanai</h3><p>24-foot pocket sliding doors. Gas grill, outdoor dining.</p></div>
+<div class="amenity-card"><h3>🚿 Outdoor Shower</h3><p>Hot & cold water. Rinse off that beach sand.</p></div>
+<div class="amenity-card"><h3>🎬 Media Room</h3><p>Surround sound, streaming services, laminated setup guide.</p></div>
+<div class="amenity-card"><h3>❄️ Multi-Zone AC</h3><p>Central AC with per-area controls. Cottage has wall unit.</p></div>
+<div class="amenity-card"><h3>🍳 Chef's Kitchen</h3><p>Gas range, full appliances, coffee maker, spices stocked.</p></div>
+<div class="amenity-card"><h3>📡 WiFi</h3><p>IkenaKai_Guest network. Password from Grant.</p></div>
 </div>
-<p style="margin-top:20px;font-size:.9rem;color:var(--light-text)">Parking: 2-car driveway + carport &nbsp;·&nbsp; Key: Front door code from Grant</p>
+<p style="margin-top:20px;font-size:.9rem;color:var(--light-text)">🅿️ 2-car driveway + carport &nbsp;·&nbsp; 🔑 Front door code from Grant</p>
 </div></section>
 <section id="rules"><div class="container">
 <h2 class="section-title">House Rules</h2>
@@ -138,12 +138,12 @@ footer strong{color:#fff}
 <section id="picks" style="background:var(--gray)"><div class="container">
 <h2 class="section-title">Grant's Picks</h2>
 <div class="picks-grid">
-<div class="pick-card"><span class="pick-icon"></span><div class="pick-info"><h4>Kamaole Beach I</h4><p>5 min. Great swimming, decent snorkeling on calm days.</p></div></div>
-<div class="pick-card"><span class="pick-icon"></span><div class="pick-info"><h4>Kihei Caffe</h4><p>Mac nut pancakes are unreal. Go early.</p></div></div>
-<div class="pick-card"><span class="pick-icon"></span><div class="pick-info"><h4>Coconut's Fish Cafe</h4><p>Best fish tacos on the island.</p></div></div>
-<div class="pick-card"><span class="pick-icon"></span><div class="pick-info"><h4>Monkeypod Kitchen</h4><p>Sunset cocktails in Wailea. Lilikoi margarita.</p></div></div>
-<div class="pick-card"><span class="pick-icon"></span><div class="pick-info"><h4>Foodland</h4><p>5 min away. Whole Foods in Wailea if feeling fancy.</p></div></div>
-<div class="pick-card"><span class="pick-icon"></span><div class="pick-info"><h4>Minit Medical</h4><p>In Kihei for minor stuff. Maui Memorial ~20 min north.</p></div></div>
+<div class="pick-card"><span class="pick-icon">🏖️</span><div class="pick-info"><h4>Kamaole Beach I</h4><p>5 min. Great swimming, decent snorkeling on calm days.</p></div></div>
+<div class="pick-card"><span class="pick-icon">☕</span><div class="pick-info"><h4>Kihei Caffe</h4><p>Mac nut pancakes are unreal. Go early.</p></div></div>
+<div class="pick-card"><span class="pick-icon">🐟</span><div class="pick-info"><h4>Coconut's Fish Cafe</h4><p>Best fish tacos on the island.</p></div></div>
+<div class="pick-card"><span class="pick-icon">🍹</span><div class="pick-info"><h4>Monkeypod Kitchen</h4><p>Sunset cocktails in Wailea. Lilikoi margarita.</p></div></div>
+<div class="pick-card"><span class="pick-icon">🛒</span><div class="pick-info"><h4>Foodland</h4><p>5 min away. Whole Foods in Wailea if feeling fancy.</p></div></div>
+<div class="pick-card"><span class="pick-icon">🏥</span><div class="pick-info"><h4>Minit Medical</h4><p>In Kihei for minor stuff. Maui Memorial ~20 min north.</p></div></div>
 </div>
 </div></section>
 <section id="booking"><div class="container">
@@ -154,10 +154,10 @@ footer strong{color:#fff}
 <div id="cal-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px;margin:20px 0"></div>
 <h3>What time works best?</h3>
 <div class="time-slots">
-<button class="time-slot-btn" data-slot="Morning" onclick="CAL.selectSlot('Morning')">Morning</button>
-<button class="time-slot-btn" data-slot="Afternoon" onclick="CAL.selectSlot('Afternoon')">Afternoon</button>
-<button class="time-slot-btn" data-slot="Evening" onclick="CAL.selectSlot('Evening')">Evening</button>
-<button class="time-slot-btn" data-slot="Multiple days" onclick="CAL.selectSlot('Multiple days')">Multiple days</button>
+<button class="time-slot-btn" data-slot="Morning" onclick="CAL.selectSlot('Morning')">🌅 Morning</button>
+<button class="time-slot-btn" data-slot="Afternoon" onclick="CAL.selectSlot('Afternoon')">☀️ Afternoon</button>
+<button class="time-slot-btn" data-slot="Evening" onclick="CAL.selectSlot('Evening')">🌙 Evening</button>
+<button class="time-slot-btn" data-slot="Multiple days" onclick="CAL.selectSlot('Multiple days')">📅 Multiple days</button>
 </div>
 <input type="hidden" id="time-slot-input" name="time_slot" value="">
 <form class="booking-form" id="booking-form" onsubmit="return submitBooking(event)">
