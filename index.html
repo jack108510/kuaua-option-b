@@ -238,10 +238,10 @@ document.addEventListener('DOMContentLoaded',()=>{renderCals();setupSnap();});
 function setupSnap(){
   const secs=document.querySelectorAll('.snap-section');
   const dots=document.querySelectorAll('.nav-dot');
-  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){
-    const i=Array.from(secs).indexOf(e.target);
-    dots.forEach((d,j)=>d.classList.toggle('active',j===i));
-  }});}},{threshold:0.5});
+  const obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){
+    var i=Array.from(secs).indexOf(e.target);
+    dots.forEach(function(d,j){d.classList.toggle('active',j===i);});
+  }});},{threshold:0.5});
   secs.forEach(s=>obs.observe(s));
 }
 
